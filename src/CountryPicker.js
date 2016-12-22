@@ -50,6 +50,10 @@ export default class CountryPicker extends Component {
     dataSource: ds.cloneWithRows(cca2List),
   };
 
+  componentDidMount(){
+    this.onSelectCountry(this.props.cca2);
+  }
+
   onSelectCountry(cca2) {
     this.setState({
       modalVisible: false,
@@ -122,7 +126,7 @@ export default class CountryPicker extends Component {
       <TouchableOpacity
         key={index}
         onPress={() => this.scrollTo(letter)}
-        activeOpacity={0.6}
+        activeOpacity={1}
       >
         <View style={styles.letter}>
           <Text style={styles.letterText}>{letter}</Text>
@@ -135,7 +139,7 @@ export default class CountryPicker extends Component {
     const country = countries[cca2];
     return (
       <View style={styles.itemCountry}>
-        {this.renderFlag(cca2)}
+        {this.renderFlag(cca2, false)}
         <View style={styles.itemCountryName}>
           <Text style={styles.countryName}>
             {this.getCountryName(country)}
@@ -162,23 +166,37 @@ export default class CountryPicker extends Component {
     );
   }
 
-  renderFlag(cca2) {
+  renderFlag(cca2, isCountryCode) {
+    let countryCodeElmt;
+    if( isCountryCode ) countryCodeElmt = this.renderCountryCode(cca2);
     return (
-      <View style={styles.itemCountryFlag}>
+      <View style={[styles.itemCountryFlag]}>
         {isEmojiable ? this.renderEmojiFlag(cca2) : this.renderImageFlag(cca2)}
+        { countryCodeElmt }
       </View>
     );
   }
 
+  renderCountryCode(cca2){
+    return(
+      <Text style={{fontSize:16, paddingTop:2}}>+{countries[cca2].callingCode}</Text>
+    )
+  }
+
   render() {
+    let {
+      wrapperStyle,
+      ...props
+    } = this.props;
+
     return (
-      <View>
+      <View style={wrapperStyle}>
         <TouchableOpacity
           onPress={() => this.setState({ modalVisible: true })}
           activeOpacity={0.7}
         >
           <View style={styles.touchFlag}>
-            {this.renderFlag(this.props.cca2)}
+            {this.renderFlag(this.props.cca2, true)}
           </View>
         </TouchableOpacity>
         <Modal
