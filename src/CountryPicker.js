@@ -166,37 +166,50 @@ export default class CountryPicker extends Component {
     );
   }
 
-  renderFlag(cca2, isCountryCode) {
-    let countryCodeElmt;
-    if( isCountryCode ) countryCodeElmt = this.renderCountryCode(cca2);
+  renderFlag(cca2) {
     return (
       <View style={[styles.itemCountryFlag]}>
         {isEmojiable ? this.renderEmojiFlag(cca2) : this.renderImageFlag(cca2)}
-        { countryCodeElmt }
       </View>
     );
   }
 
-  renderCountryCode(cca2){
-    return(
-      <Text style={{fontSize:16, paddingTop:2}}>+{countries[cca2].callingCode}</Text>
-    )
+
+
+  renderCountryIndication( cca2, countryIndication ){
+    switch (countryIndication) {
+      case "countryCode":
+        return(<Text style={{fontSize:16, paddingTop:2}}>+{countries[cca2].callingCode}</Text>);
+        break;
+      case "countryName" :
+        return(<Text style={{fontSize:16, paddingTop:2}}>{this.getCountryName( countries[cca2])}</Text>);
+        break;
+      default:
+    }
   }
 
   render() {
     let {
       wrapperStyle,
+      disabled,
+      countryIndication,
       ...props
     } = this.props;
 
     return (
       <View style={wrapperStyle}>
+
         <TouchableOpacity
-          onPress={() => this.setState({ modalVisible: true })}
+          onPress={() => {
+          if (!disabled) {
+            this.setState({ modalVisible: true })
+          }
+          }}
           activeOpacity={0.7}
         >
           <View style={styles.touchFlag}>
             {this.renderFlag(this.props.cca2, true)}
+            {this.renderCountryIndication( this.props.cca2, countryIndication) }
           </View>
         </TouchableOpacity>
         <Modal
